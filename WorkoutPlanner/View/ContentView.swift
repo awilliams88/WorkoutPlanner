@@ -90,7 +90,9 @@ struct ContentView: View {
                 HealthKitManager.shared.requestAuthorization { success, error in
                     print(success ? "Authorized" : "HealthKit auth failed: \(String(describing: error))")
                 }
+                NotificationManager.shared.requestAuthorization()
             }
+
         }
     }
 }
