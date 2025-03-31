@@ -56,9 +56,12 @@ struct ContentView: View {
                         reps = 10
                         restTime = 60
                         duration = 1800
+
                         HealthKitManager.shared.saveWorkout(duration: duration) { success, error in
                             print(success ? "Workout saved" : "Failed: \(String(describing: error))")
                         }
+
+                        NotificationManager.shared.scheduleNotification(for: workout.name, in: 10)
                     }
                     .padding()
                     .background(Color.blue)
@@ -92,7 +95,6 @@ struct ContentView: View {
                 }
                 NotificationManager.shared.requestAuthorization()
             }
-
         }
     }
 }
