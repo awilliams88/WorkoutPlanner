@@ -11,14 +11,14 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                VStack {
+                VStack(spacing: 10) {
                     TextField("Workout Name", text: $newWorkoutName)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding()
+                        .padding(.horizontal)
 
                     HStack {
                         Text("Sets:")
-                        TextField("3", value: $sets, formatter: NumberFormatter())
+                        TextField("", value: $sets, formatter: NumberFormatter())
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .keyboardType(.numberPad)
                     }
@@ -26,7 +26,7 @@ struct ContentView: View {
 
                     HStack {
                         Text("Reps:")
-                        TextField("10", value: $reps, formatter: NumberFormatter())
+                        TextField("", value: $reps, formatter: NumberFormatter())
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .keyboardType(.numberPad)
                     }
@@ -34,7 +34,7 @@ struct ContentView: View {
 
                     HStack {
                         Text("Rest Time (sec):")
-                        TextField("60", value: $restTime, formatter: NumberFormatter())
+                        TextField("", value: $restTime, formatter: NumberFormatter())
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .keyboardType(.numberPad)
                     }
@@ -42,7 +42,7 @@ struct ContentView: View {
 
                     HStack {
                         Text("Duration (sec):")
-                        TextField("1800", value: $duration, formatter: NumberFormatter())
+                        TextField("", value: $duration, formatter: NumberFormatter())
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .keyboardType(.numberPad)
                     }
@@ -57,11 +57,7 @@ struct ContentView: View {
                         restTime = 60
                         duration = 1800
                         HealthKitManager.shared.saveWorkout(duration: duration) { success, error in
-                            if success {
-                                print("Workout saved to HealthKit")
-                            } else {
-                                print("Failed to save workout: \(String(describing: error))")
-                            }
+                            print(success ? "Workout saved" : "Failed: \(String(describing: error))")
                         }
                     }
                     .padding()
@@ -70,11 +66,20 @@ struct ContentView: View {
                     .cornerRadius(8)
                 }
 
-                List(workouts) { workout in
-                    NavigationLink(destination: WorkoutDetailView(workout: workout)) {
-                        WorkoutView(workout: workout)
+                List {
+                    ForEach(workouts.indices, id: \.self) { index in
+                        NavigationLink(destination: WorkoutDetailView(workout: workouts[index])) {
+                            HStack {
+                                WorkoutView(workout: workouts[index])
+                                Toggle("", isOn: Binding(
+                                    get: { workouts[index].isCompleted },
+                                    set: { workouts[index].isCompleted = $0 }
+                                ))
+                                .labelsHidden()
+                                .toggleStyle(.switch)
+                            }
+                        }
                     }
-                    .buttonStyle(PlainButtonStyle())
                 }
                 .listStyle(InsetGroupedListStyle())
 
@@ -83,17 +88,9 @@ struct ContentView: View {
             .navigationTitle("Workout Planner")
             .onAppear {
                 HealthKitManager.shared.requestAuthorization { success, error in
-                    if success {
-                        print("HealthKit access granted")
-                    } else {
-                        print("HealthKit authorization failed: \(String(describing: error))")
-                    }
+                    print(success ? "Authorized" : "HealthKit auth failed: \(String(describing: error))")
                 }
             }
         }
     }
-}
-
-#Preview {
-    ContentView()
 }

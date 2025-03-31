@@ -7,4 +7,5 @@ struct Workout: Identifiable, Hashable {
     var reps: Int
     var restTime: Int
     var duration: TimeInterval
+    var isCompleted: Bool = false
 }

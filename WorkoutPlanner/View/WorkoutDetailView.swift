@@ -11,12 +11,22 @@ struct WorkoutDetailView: View {
 
             Text("Sets: \(workout.sets)")
                 .font(.title2)
+
             Text("Reps: \(workout.reps)")
                 .font(.title2)
+
             Text("Rest Time: \(workout.restTime) seconds")
                 .font(.title2)
+
             Text("Duration: \(Int(workout.duration)) seconds")
                 .font(.title2)
+
+            HStack {
+                Text("Completed:")
+                    .font(.title2)
+                Image(systemName: workout.isCompleted ? "checkmark.circle.fill" : "xmark.circle")
+                    .foregroundColor(workout.isCompleted ? .green : .red)
+            }
 
             Spacer()
         }
@@ -30,8 +40,4 @@ struct WorkoutDetailView: View {
         .padding()
         .navigationTitle("Workout Details")
     }
-}
-
-#Preview {
-    WorkoutDetailView(workout: Workout(name: "Push-Ups", sets: 3, reps: 15, restTime: 60, duration: 300))
 }
